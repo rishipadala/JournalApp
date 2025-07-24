@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <!-- Define your appenders, loggers, and root logger here -->
+    <appender name = "myConsoleAppender" class = "ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                <!--
+                %d{HH:mm:ss.SSS} For Date and Time | %-5level for Logging Levels
+                -5 : is for spaces after level name : "INFO " 4 and extra 1 = 5
+                %msg = message | %n = new line
+                -->
+
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} --- %msg%n
+
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- Instead of FileAppender (Printing in same file again & again)we USE - RollingFileAppender for printing in structured logs in different files
+    By initializing Rolling policy , we can create Log files based on date & time
+    -->
+    <appender name= "myFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>
+            journalApp.log
+        </file>
+
+        <rollingPolicy class = "ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <!-- we can create Log files based on date & time | %i index & .log is File Extension-->
+            <!-- Per Minute the Log Files will be added  -->
+            <fileNamePattern> journalApp-%d{yy-MM-dd_HH-mm}.%i.log </fileNamePattern>
+
+            <!-- We can Give max File Size if the File reaches it Max Size then Another Log file Created-->
+            <maxFileSize> 10MB </maxFileSize>
+
+            <!-- If the Log files have exceeds the {number} then delete the oldest files from folder -->
+            <maxHistory> 10 </maxHistory>
+
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} --- %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level ="INFO">
+        <appender-ref ref="myConsoleAppender"/>
+        <appender-ref ref="myFileAppender" />
+    </root>
+</configuration>
