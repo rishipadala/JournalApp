@@ -4,6 +4,7 @@ package com.rishipadala.journalApp.Service;
 import com.rishipadala.journalApp.Entity.JournalEntry;
 import com.rishipadala.journalApp.Entity.User;
 import com.rishipadala.journalApp.Repository.JournalEntryRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class JournalEntryService {
 
     @Autowired
@@ -41,7 +43,7 @@ public class JournalEntryService {
             //user.setUserName(null); //inconsistency problem--> This can be resolved by Transactional Ek bhi interrupt then whole method rollback!
 
         } catch (Exception e) {
-            System.out.println(e);
+            log.error("Error Occured : ", e);
             throw new RuntimeException("An error Occurred while saving the entry : ", e);
         }
     }
