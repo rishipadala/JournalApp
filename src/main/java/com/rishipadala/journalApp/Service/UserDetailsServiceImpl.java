@@ -1,4 +1,4 @@
-package com.rishipadala.journalApp.Config;
+package com.rishipadala.journalApp.Service;
 
 import com.rishipadala.journalApp.Entity.User;
 import com.rishipadala.journalApp.Repository.UserRepo;
@@ -6,14 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.userdetails.User.UserBuilder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Component //This is for Fetching the UserDetails from UserRepo (MongoDB) for the purpose of Spring Security
+@Service //This is for Fetching the UserDetails from UserRepo (MongoDB) for the purpose of Spring Security
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired

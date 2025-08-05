@@ -1,6 +1,5 @@
 package com.rishipadala.journalApp.Service;
 
-import com.rishipadala.journalApp.Config.UserDetailsServiceImpl;
 import com.rishipadala.journalApp.Entity.User;
 import com.rishipadala.journalApp.Repository.UserRepo;
 import org.junit.jupiter.api.Assertions;
@@ -11,10 +10,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.ArrayList;
 
