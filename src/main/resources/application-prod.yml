@@ -1,0 +1,65 @@
+spring:
+  application:
+      name: Journal App
+
+
+
+  data:
+   mongodb:
+     uri: ${MONGO_URI}
+     database: ${MONGO_DATABASE_NAME}
+     auto-index-creation: true
+
+   redis:
+     host: ${REDIS_HOST}
+     port: ${REDIS_PORT}
+     password: ${REDIS_PASSWORD}
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # Required connection configs for Kafka producer, consumer, and admin
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: weekly-sentiment-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.rishipadala.journalApp.model
+    # Corrected properties location
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: ${KAFKA_JAAS_CONFIG}
+      session.timeout.ms: 45000
+
+
+mail:
+  sender:
+    email: rishitestacc20@gmail.com
+
+weather:
+  api:
+    key: ${WEATHER_API_KEY}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+server:
+  port: 8080

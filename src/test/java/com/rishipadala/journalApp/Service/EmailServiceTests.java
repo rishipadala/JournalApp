@@ -12,8 +12,7 @@ public class EmailServiceTests {
     private EmailService emailService;
 
 
-
-    @Disabled
+   @Disabled
     @Test
     public void TestMail(){
         emailService.sendMail("draken@yopmail.com",

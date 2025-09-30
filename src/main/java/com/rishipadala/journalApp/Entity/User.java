@@ -29,7 +29,7 @@ public class User {
 
     private String email;
 
-    private String sentimentAnalysis;
+    private boolean sentimentAnalysis;
 
     @DBRef //The user document stores only references (ObjectIds) to journal entry documents rather than embedding full entries.
     private List<JournalEntry> journalEntries = new ArrayList<>();
