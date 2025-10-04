@@ -6,6 +6,8 @@ import com.rishipadala.journalApp.Entity.User;
 import com.rishipadala.journalApp.Service.JournalEntryService;
 
 import com.rishipadala.journalApp.Service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/journal")
+@Tag(name = "Journal Entry APIs", description = "APIs for Managing User Journal Entries - Read, Update, Create & Delete Entries!")
 public class JournalEntryController {
 
     @Autowired
@@ -30,6 +33,7 @@ public class JournalEntryController {
     private UserService userService;
 
     @GetMapping()
+    @Operation(summary = "Get all journal entries for the current user")
     public ResponseEntity<?> getAllJournalEntriesofUser(){ // '?' Wild card pattern - With help of this Type we can return any type of class instead JournalEntry we can also return User.class
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //SecurityContextHolder holds the security context (including authentication and user details)
         String userName = authentication.getName();
@@ -42,6 +46,7 @@ public class JournalEntryController {
     }
 
     @PostMapping()
+    @Operation(summary = "Create a new journal entry for the Authenticated User")
     //@RequestBODY = It allows you to directly map the content of the HTTP request body (often in formats like JSON or XML) to a specified Java object.
     public ResponseEntity<?> createEntry(@RequestBody JournalEntry myEntry ){
         try {
@@ -56,6 +61,7 @@ public class JournalEntryController {
     
     //@PathVariable annotation is used to bind /delete/{myid} to the method parameter myid.
     @GetMapping("id/{myid}")
+    @Operation(summary = "Get a specific journal entry by its ID")
     public ResponseEntity<?> getJournalEntryByID(@PathVariable ObjectId myid){
         //It says that find the entry by id , if there is no "/{myid}" then return null.
 
@@ -74,6 +80,7 @@ public class JournalEntryController {
     }
 
     @DeleteMapping("id/{myid}")
+    @Operation(summary = "Delete a specific journal entry by its ID")
     public ResponseEntity<?> deleteEntrybyID(@PathVariable ObjectId myid ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //SecurityContextHolder holds the security context (including authentication and user details)
         String userName = authentication.getName();
@@ -86,6 +93,7 @@ public class JournalEntryController {
     }
 
     @PutMapping("id/{myid}")
+    @Operation(summary = "Update an existing journal entry by its ID")
     public ResponseEntity<?> updateEntrybyID(@PathVariable ObjectId myid ,
                                              @RequestBody JournalEntry newEntry) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //SecurityContextHolder holds the security context (including authentication and user details)
