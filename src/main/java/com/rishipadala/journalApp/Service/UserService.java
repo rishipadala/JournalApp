@@ -5,6 +5,7 @@ package com.rishipadala.journalApp.Service;
 import com.rishipadala.journalApp.Entity.User;
 
 import com.rishipadala.journalApp.Repository.UserRepo;
+import com.rishipadala.journalApp.dto.UserUpdateforOAuth2_DTO;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -24,6 +26,44 @@ public class UserService {
     private UserRepo userRepo;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        /**
+         * Finds a user by their email. If the user doesn't exist, it creates a new one
+         * with a random password, as they are authenticating via Google.
+         *
+         * @param email The email of the user from their Google profile.
+         * @return The existing or newly created User entity.
+         */
+        public User findOrCreateGoogleUser(String email) {
+            User user = userRepo.findByuserName(email);
+
+            if (user == null) {
+                log.info("Creating new user for Google login with email: {}", email);
+                user = new User();
+                user.setUserName(email);
+                // For OAuth2 users, we don't have a password. Set a random, secure one.
+                user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+                user.setRoles(Arrays.asList("USER"));
+                userRepo.save(user);
+            }
+            return user;
+        }
+
+
+    public User updateUserSettings(String userName, UserUpdateforOAuth2_DTO userUpdateDTO) {
+        User userInDb = findByuserName(userName);
+        if (userInDb != null) {
+            // Only update the field if it was provided in the request
+            if (userUpdateDTO.getSentimentAnalysis() != null) {
+                userInDb.setSentimentAnalysis(userUpdateDTO.getSentimentAnalysis());
+            }
+            // You would add other updatable fields here, e.g., userInDb.setDisplayName(...)
+
+            saveUser(userInDb); // Use saveUser to avoid re-encoding the password
+            return userInDb;
+        }
+        return null; // Or throw a UserNotFoundException
+    }
 
     //This method is for GET - to get all entries
     public List<User> getAll(){

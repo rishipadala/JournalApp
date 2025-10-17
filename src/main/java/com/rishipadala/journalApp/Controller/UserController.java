@@ -5,6 +5,7 @@ import com.rishipadala.journalApp.Repository.UserRepo;
 import com.rishipadala.journalApp.Service.UserService;
 import com.rishipadala.journalApp.Service.WeatherService;
 import com.rishipadala.journalApp.api.response.WeatherResponse;
+import com.rishipadala.journalApp.dto.UserUpdateforOAuth2_DTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,5 +72,20 @@ public class UserController {
             // For example, if the list is ["Sunny", "Clear"]
         }
         return new ResponseEntity<>("HI! " + authentication.getName() + greetings ,HttpStatus.OK);
+    }
+
+    @PutMapping("/settings")
+    @Operation(summary = "Update settings for the authenticated user")
+    public ResponseEntity<?> updateUserSettings(@RequestBody UserUpdateforOAuth2_DTO userUpdateDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName(); // This is the user's email for an OAuth2 user
+
+        User updatedUser = userService.updateUserSettings(userName, userUpdateDTO);
+
+        if (updatedUser != null) {
+            // You might want to return a UserDTO here instead of the full User entity to hide the password
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
