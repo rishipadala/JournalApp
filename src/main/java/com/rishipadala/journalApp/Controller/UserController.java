@@ -8,6 +8,7 @@ import com.rishipadala.journalApp.api.response.WeatherResponse;
 import com.rishipadala.journalApp.dto.UserUpdateforOAuth2_DTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/user")
 @Tag(name = "USER APIs", description = "Read , Update & Delete User")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -46,13 +49,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping
-    @Operation(summary = "Delete the authenticated user's account")
-    public ResponseEntity<?> deleteCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userRepo.deleteByUserName(authentication.getName());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 
     @GetMapping
     @Operation(summary = "Get a Greeting message and current weather for the authenticated user")
@@ -87,5 +83,19 @@ public class UserController {
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping
+    @Operation(summary = "Delete the authenticated user's account and all associated journal entries")
+    @ResponseStatus(HttpStatus.NO_CONTENT) // Use annotation for cleaner code
+    public void deleteCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        boolean deleted = userService.deleteUserAndAssociatedEntries(userName);
+        if (!deleted) {
+            // Optional: Log or handle the case where the user wasn't found
+            log.warn("Attempted to delete user {}, but user was not found.", userName);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
     }
 }

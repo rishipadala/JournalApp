@@ -2,8 +2,10 @@ package com.rishipadala.journalApp.Service;
 
 
 
+import com.rishipadala.journalApp.Entity.JournalEntry;
 import com.rishipadala.journalApp.Entity.User;
 
+import com.rishipadala.journalApp.Repository.JournalEntryRepo;
 import com.rishipadala.journalApp.Repository.UserRepo;
 import com.rishipadala.journalApp.dto.UserUpdateforOAuth2_DTO;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.Arrays;
@@ -24,6 +27,9 @@ import java.util.UUID;
 public class UserService {
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private JournalEntryRepo journalEntryRepo;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -41,6 +47,7 @@ public class UserService {
                 log.info("Creating new user for Google login with email: {}", email);
                 user = new User();
                 user.setUserName(email);
+                user.setEmail(email);
                 // For OAuth2 users, we don't have a password. Set a random, secure one.
                 user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
                 user.setRoles(Arrays.asList("USER"));
@@ -63,6 +70,33 @@ public class UserService {
             return userInDb;
         }
         return null; // Or throw a UserNotFoundException
+    }
+
+    /**
+     * Deletes a user by their username and also deletes all associated journal entries.
+     * This operation is transactional to ensure atomicity.
+     *
+     * @param userName The username (email) of the user to delete.
+     * @return true if the user was found and deleted, false otherwise.
+     */
+    @Transactional // Ensures atomicity: if one-step fails, all steps are rolled back
+    public boolean deleteUserAndAssociatedEntries(String userName) {
+        User user = userRepo.findByuserName(userName);
+        if (user != null) {
+            // 1. Delete associated Journal Entries
+            // This assumes your User entity has a 'journalEntries' list
+            if (user.getJournalEntries() != null && !user.getJournalEntries().isEmpty()) {
+                journalEntryRepo.deleteAllById(user.getJournalEntries().stream().map(JournalEntry::getId).toList());
+            }
+
+            // 2. Delete the User
+            userRepo.delete(user);
+            log.info("User {} and their journal entries deleted successfully.", userName);
+            return true;
+        } else {
+            log.warn("User {} not found for deletion.", userName);
+            return false;
+        }
     }
 
     //This method is for GET - to get all entries
