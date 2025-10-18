@@ -19,7 +19,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequestMapping("/auth/google")
-@Tag(name = "Google Authentication", description = "APIs for Google OAuth2 Login")
+@Tag(name = "Google Authentication", description = "APIs for Google OAuth2 Login/Signup")
 public class GoogleAuthController {
 
     @Autowired
