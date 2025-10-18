@@ -24,9 +24,9 @@ spring:
      password: ${REDIS_PASSWORD}
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
+    host: smtp.sendgrid.net
+    port: 2525
+    username: apikey
     password: ${MAIL_PASSWORD}
     properties:
       mail:
