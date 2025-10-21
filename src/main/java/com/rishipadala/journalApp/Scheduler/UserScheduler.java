@@ -42,8 +42,8 @@ public class UserScheduler {
     private KafkaTemplate<String, SentimentData> kafkaTemplate;
 
     //Purpose: Periodically sends an email to users summarizing their most frequent sentiment from journal entries in the last 7 days.
-//    @Scheduled(cron = "0 0 9 ? * SUN")
-    @Scheduled(cron = "0 * * ? * *")
+    @Scheduled(cron = "0 0 9 ? * SUN")
+//    @Scheduled(cron = "0 * * ? * *")
     public void fetchUsersAndSendSentiMail(){
         log.info(":-) --- Scheduler is running! Fetching users for sentiment analysis... ---");
         List<User> users = userRepo.getUsersbySA(); //fetch users
